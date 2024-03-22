@@ -4,7 +4,7 @@ from langchain.agents import initialize_agent, AgentType, Tool
 from langchain import SerpAPIWrapper
 
 os.environ["SERPAPI_API_KEY"] = (
-    "1e3c93e0753ac224098370cd71da86150c6609caba6b5aaa307e04b72a5006e1"
+    # add your key
 )
 
 
