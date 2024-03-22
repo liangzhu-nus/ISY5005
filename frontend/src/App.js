@@ -109,6 +109,7 @@ function App() {
                           <Select value={selectedPlatform} onChange={setSelectedPlatform}>
                             <Select.Option value="xiaohongshu">xiaohongshu</Select.Option>
                             <Select.Option value="zhihu">zhihu</Select.Option>
+                            <Select.Option value="x">x</Select.Option>
                           </Select>
                         </Form.Item>
                         <Form.Item label="文案字数">
@@ -138,7 +139,7 @@ function App() {
             {/* 底部按钮 */}
             <Row justify="center" style={{ marginTop: '20px' }}>
               <Col>
-                <Button type="primary" onClick={handlePublish}>发布到小红书</Button>
+            <Button type="primary" onClick={handlePublish}>Publish to { selectedPlatform }</Button>
               </Col>
             </Row>
         </div>

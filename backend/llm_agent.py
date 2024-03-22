@@ -6,11 +6,15 @@ from langchain import SerpAPIWrapper
 os.environ["SERPAPI_API_KEY"] = (
     "1e3c93e0753ac224098370cd71da86150c6609caba6b5aaa307e04b72a5006e1"
 )
-os.environ["OPENAI_API_KEY"] = "sk-2q7ggpzPAATswCTo95C3B012Ce05432a92D1Ef381dCa4814"
 
 
 def get_llm_response(
-    topic: str, description: str, wordcount, isLiveSearchEnabled
+    topic: str,
+    description: str,
+    wordcount,
+    isLiveSearchEnabled,
+    selectedPlatform,
+    selectedStyle,
 ) -> str:
     res = ""
     llm = OpenAI()
@@ -18,7 +22,27 @@ def get_llm_response(
         res = search_google(topic)
     else:
         res = llm(topic)
+
+    if selectedPlatform == "xiaohongshu":
+        return get_xiaohongshu_response(wordcount, topic, description, res)
+    elif selectedPlatform == "x":
+        return get_x_response(wordcount, topic, description, res)
+    elif selectedPlatform == "zhihu":
+        return get_zhihu_response(wordcount, topic, description, res)
+
+
+def get_xiaohongshu_response(wordcount, topic, description, res) -> str:
     prompt = f"Please generate a {wordcount}-word paragraph of Little Red Book copy based on the {topic} {description} and {res}, include as many emoji as possible, and add a few hashtags at the end of the copy, something like: '#travel'."
+    return llm(prompt)
+
+
+def get_x_response(wordcount, topic, description, res) -> str:
+    prompt = f"Please generate a {wordcount}-word paragraph of twitter copy based on the {topic} {description} and {res}."
+    return llm(prompt)
+
+
+def get_zhihu_response(wordcount, topic, description, res) -> str:
+    prompt = f"Please generate a {wordcount}-word paragraph of zhihu copy based on the {topic} {description} and {res}."
     return llm(prompt)
 
 

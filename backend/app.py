@@ -19,16 +19,26 @@ def generate_text():
     description = data["description"]
     wordcount = data["wordCount"]
     isLiveSearchEnabled = data["isLiveSearchEnabled"]
-    result = get_llm_response(topic, description, wordcount, isLiveSearchEnabled)
+    selectedPlatform = data["selectedPlatform"]
+    selectedStyle = data["selectedStyle"]
+    result = get_llm_response(
+        topic,
+        description,
+        wordcount,
+        isLiveSearchEnabled,
+        selectedPlatform,
+        selectedStyle,
+    )
     print(result)
     return jsonify({"result": result})
 
 
 @app.route("/post-social", methods=["POST"])
 def post_social():
-    data = request.get_json()
+    """Post to social media"""
+    data = request.get_json()  # 获取发布平台以及发布内容
     # RPA code here
-
+    # TODO
     # return jsonify({"result": result})
 
 
