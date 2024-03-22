@@ -1,0 +1,5 @@
+flask-cors
+flask
+openai
+langchain
+google-search-results
