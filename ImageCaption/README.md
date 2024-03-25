@@ -1,5 +1,5 @@
-1.cd to this folder
-2.pip install -r requirements.txt
-3.python predict.py
-##predict.py 代码中get_caption函数为封装好的接收图片地址返回结果
-4.result will be printed
+1. cd to this folder
+2. Run `pip install -r requirements.txt`
+3. Execute `python predict.py`
+   - In the `predict.py` code, the `get_caption` function is already implemented to accept an image path and return the result.
+4. The result will be printed.
