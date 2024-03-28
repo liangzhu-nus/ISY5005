@@ -3,3 +3,9 @@ flask
 openai
 langchain
 google-search-results
+Werkzeug
+torch
+torchvision
+numpy
+transformers
+tqdm

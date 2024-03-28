@@ -1,11 +1,17 @@
 import os
+import sys
 from langchain_community.llms import OpenAI
 from langchain.agents import initialize_agent, AgentType, Tool
 from langchain import SerpAPIWrapper
+from ImageCaption.predict import get_caption
+
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 os.environ["SERPAPI_API_KEY"] = (
     # add your key
+    "1e3c93e0753ac224098370cd71da86150c6609caba6b5aaa307e04b72a5006e1"
 )
+llm = OpenAI()
 
 
 def get_llm_response(
@@ -75,12 +81,12 @@ def beautify_picture_description(description: str, word_count=100) -> str:
 
 
 def get_original_description(pic):
-    """Get the original description of the picture"""
-    ##### TODO:
-    return "A picture of a cat."
+    """Get the original description of the picture, NOTICE:`pic` must be a file in the uploads folder."""
+    return get_caption(f"{CURRENT_DIR}/uploads/{pic}")
 
 
 if __name__ == "__main__":
     llm = OpenAI()
     # print(get_llm_response("openai sora", "llm", 100, False))
-    print(get_llm_response("openai sora", "llm", 100, True))
+    # print(get_llm_response("openai sora", "llm", 100, True))
+    print(get_original_description("1.png"))

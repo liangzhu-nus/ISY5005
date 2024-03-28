@@ -12,6 +12,8 @@ import {
 } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
+import { UploadOutlined } from '@ant-design/icons';
+import { message, Upload } from 'antd';
 
 
 const { TextArea } = Input;
@@ -26,6 +28,7 @@ function App() {
   const [responseText, setResponseText] = useState('');
   const [selectedPlatform, setSelectedPlatform] = useState('xiaohongshu');
   const [selectedStyle, setSelectedStyle] = useState('tech');
+  const [fileList, setFileList] = useState([]);
 
   const customIcons = {
     1: <FrownOutlined />,
@@ -35,6 +38,51 @@ function App() {
     5: <SmileOutlined />,
   };
 
+  const beforeUpload = (file) => {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+      if (!isJpgOrPng) {
+          message.error('You can only upload JPG/PNG file!');
+      }
+      return isJpgOrPng;
+  };
+
+  const handleChange = (info) => {
+      let fileList = [...info.fileList];
+      
+      // 限制文件数量和显示最新上传的文件
+      fileList = fileList.slice(-1);
+
+      // 读取响应并显示文件链接
+      fileList = fileList.map(file => {
+          if (file.response) {
+              // 组件将根据此URL渲染图像
+              file.url = file.response.url;
+          }
+          return file;
+      });
+
+      setFileList(fileList);
+  };
+
+  const customRequest = async (options) => {
+      const { onSuccess, onError, file, onProgress } = options;
+      const formData = new FormData();
+      formData.append('file', file);
+      
+    try {
+        console.error('Uploading file:', file);
+          const response = await axios.post('http://127.0.0.1:5000/upload', formData, {
+              onUploadProgress: ({ total, loaded }) => {
+                  onProgress({ percent: Math.round((loaded / total) * 100).toFixed(2) }, file);
+              },
+          });
+          
+          onSuccess(response.data, file);
+      } catch (error) {
+          onError({ error });
+          message.error('Upload failed');
+      }
+  };
 
   // 表单提交处理程序
   const handleSubmit = async (e) => {
@@ -120,6 +168,16 @@ function App() {
                         </Form.Item>
                         <Form.Item label="是否自动生图" valuePropName="checked">
                           <Switch checked={isGenPicEnabled} onChange={setIsGenPicEnabled} checkedChildren="开启" unCheckedChildren="关闭"/>
+                        </Form.Item>
+                        <Form.Item label="upload image" valuePropName="checked">
+                        <Upload
+                            customRequest={customRequest}
+                            fileList={fileList}
+                            onChange={handleChange}
+                            beforeUpload={beforeUpload}
+                        >
+                            <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                        </Upload>
                         </Form.Item>
                         <Form.Item label="预览内容">
                           <Button type='primary' onClick={handleSubmit}>生成文案</Button>
