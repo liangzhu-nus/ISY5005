@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, session, jsonify
 import os
-import openai
+# import openai
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
 from llm_agent import (
     get_llm_response,
     beautify_picture_description,
     get_original_description,
 )
-from werkzeug.utils import secure_filename
+from pulishers import (
+    pubXiaoHongShu, pubTwitter, pubZhihu, pubWeibo
+)
 
 app = Flask(__name__)
 CORS(app)
@@ -76,9 +80,27 @@ def generate_text():
 def post_social():
     """Post to social media"""
     data = request.get_json()  # 获取发布平台以及发布内容
-    # RPA code here
-    # TODO
-    # return jsonify({"result": result})
+    content = data["content"]
+    title = data["topic"]
+    platform = data["platform"]
+    # TODO: 请求包含图片名称
+    # filename = data["filename"]
+    # img_dir = os.path.join(app.config["UPLOAD_FOLDER"], filename)  # 必须是本地的绝对路径！没有文件则设为None
+    img_dir = os.path.abspath(os.path.join(app.config["UPLOAD_FOLDER"], "1.png"))  # 测试用
+    try:
+        if platform == 'xiaohongshu': #图片正文必需 可在前端验证
+            pubXiaoHongShu(content, img_dir, title, isPrivate=False)
+        elif platform == 'zhihu': #标题正文必需
+            pubZhihu(content, title)
+        elif platform == 'x': #仅需正文
+            pubTwitter(content, img_dir)
+        elif platform == 'weibo': #仅需正文
+            pubWeibo(content, img_dir)
+        else:
+            assert not 'reachable', 'Invalid platform'
+    except Exception as e:
+        return jsonify({"error": e}), 400
+    return jsonify({"status": "success"})
 
 
 @app.route("/get_pic_description", methods=["POST"])

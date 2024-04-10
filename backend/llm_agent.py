@@ -35,6 +35,8 @@ def get_llm_response(
         return get_x_response(wordcount, topic, description, res)
     elif selectedPlatform == "zhihu":
         return get_zhihu_response(wordcount, topic, description, res)
+    elif selectedPlatform == "weibo":
+        return get_zhihu_response(wordcount, topic, description, res)
 
 
 def get_xiaohongshu_response(wordcount, topic, description, res) -> str:
@@ -43,12 +45,20 @@ def get_xiaohongshu_response(wordcount, topic, description, res) -> str:
 
 
 def get_x_response(wordcount, topic, description, res) -> str:
-    prompt = f"Please generate a {wordcount}-word paragraph of twitter copy based on the {topic} {description} and {res}."
+    prompt = f"Please generate a paragraph for Twitter based on the {topic} {description} and {res}."\
+            +" The content is better within 280 characters."\
+            +" You may add hashtags like '#life'."
     return llm(prompt)
 
 
 def get_zhihu_response(wordcount, topic, description, res) -> str:
     prompt = f"Please generate a {wordcount}-word paragraph of zhihu copy based on the {topic} {description} and {res}."
+    return llm(prompt)
+
+
+def get_weibo_response(wordcount, topic, description, res) -> str:
+    prompt = f"Please generate a {wordcount}-word paragraph of Weibo copy based on the {topic} {description} and {res}."\
+        + " You may add hashtags like '#hashtag#'."
     return llm(prompt)
 
 

@@ -70,7 +70,7 @@ function App() {
       formData.append('file', file);
       
     try {
-        console.error('Uploading file:', file);
+        console.log('Uploading file:', file);
           const response = await axios.post('http://127.0.0.1:5000/upload', formData, {
               onUploadProgress: ({ total, loaded }) => {
                   onProgress({ percent: Math.round((loaded / total) * 100).toFixed(2) }, file);
@@ -106,13 +106,23 @@ function App() {
   };
 
 
-  // 新增：发布到小红书的处理程序
+  // 发布到社交平台
   const handlePublish = async () => {
+    // 输入检查，可以改为表单验证等方式
+    if (''===responseText) {
+      alert('Content is empty!');
+      return;
+    }
+
     try {
       // 使用axios发送POST请求到另一个API
       const response = await axios.post('http://127.0.0.1:5000/post-social', {
         content: responseText,  // 这里发送TextArea中的内容
+        topic: topic,
+        platform: selectedPlatform,
+        // TODO: 发送文件名称 filename: filename
       });
+      // RPA完成工作（10s+）后才收到response 可以改成异步 也可以在前端做相应状态反馈
       console.log('Published:', response.data);
       // 可以在这里设置一些发布后的状态反馈
     } catch (error) {
@@ -155,9 +165,10 @@ function App() {
                         </Form.Item>
                         <Form.Item label="发布平台">
                           <Select value={selectedPlatform} onChange={setSelectedPlatform}>
-                            <Select.Option value="xiaohongshu">xiaohongshu</Select.Option>
-                            <Select.Option value="zhihu">zhihu</Select.Option>
-                            <Select.Option value="x">x</Select.Option>
+                            <Select.Option value="xiaohongshu">Xiaohongshu</Select.Option>
+                            <Select.Option value="zhihu">Zhihu</Select.Option>
+                            <Select.Option value="x">X(Twitter)</Select.Option>
+                            <Select.Option value="weibo">Weibo</Select.Option>
                           </Select>
                         </Form.Item>
                         <Form.Item label="文案字数">
