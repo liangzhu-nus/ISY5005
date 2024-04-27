@@ -6,7 +6,7 @@ from langchain import SerpAPIWrapper
 from ImageCaption.predict import get_caption
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-os.environ["OPENAI_API_KEY"] = "sk-ixQc7aP4xrC0UbYw227c6dFc5179494791B8676c53A47c7e"
+os.environ["OPENAI_API_KEY"] = None
 os.environ["OPENAI_BASE_URL"] = "https://aihubmix.com/v1"
 os.environ["SERPAPI_API_KEY"] = (
     # add your key
@@ -14,6 +14,12 @@ os.environ["SERPAPI_API_KEY"] = (
 )
 llm = OpenAI()
 
+STYLE_MAP = {
+    "none": "",
+    "tech": "technical styled",
+    "entertainment": "casual and entertaining styled",
+    "life": "slice of life styled",
+}
 
 def get_llm_response(
     topic: str,
@@ -30,36 +36,45 @@ def get_llm_response(
     else:
         res = llm(topic)
 
+    style_adj = STYLE_MAP[selectedStyle]
+
     if selectedPlatform == "xiaohongshu":
-        return get_xiaohongshu_response(wordcount, topic, description, res)
+        return get_xiaohongshu_response(wordcount, topic, description, res, style_adj)
     elif selectedPlatform == "x":
-        return get_x_response(wordcount, topic, description, res)
+        return get_x_response(wordcount, topic, description, res, style_adj)
     elif selectedPlatform == "zhihu":
-        return get_zhihu_response(wordcount, topic, description, res)
+        return get_zhihu_response(wordcount, topic, description, res, style_adj)
     elif selectedPlatform == "weibo":
-        return get_zhihu_response(wordcount, topic, description, res)
+        return get_zhihu_response(wordcount, topic, description, res, style_adj)
 
 
-def get_xiaohongshu_response(wordcount, topic, description, res) -> str:
-    prompt = f"Please generate a {wordcount}-word paragraph of Little Red Book copy based on the {topic} {description} and {res}, include as many emoji as possible, and add a few hashtags at the end of the copy, something like: '#travel'."
+def get_xiaohongshu_response(wordcount, topic, description, res, style) -> str:
+    prompt = (
+        f"Please generate a {wordcount}-word {style} paragraph of Little Red Book copy based on the {topic} {description} and {res},"
+        + " include emojis, and add a few hashtags at the end of the copy, something like: '#travel'."
+    )
     return llm(prompt)
 
 
-def get_x_response(wordcount, topic, description, res) -> str:
-    prompt = f"Please generate a paragraph for Twitter based on the {topic} {description} and {res}."\
-            +" The content is better within 280 characters."\
-            +" You may add hashtags like '#life'."
+def get_x_response(wordcount, topic, description, res, style) -> str:
+    prompt = (
+        f"Please generate a {style} paragraph for Twitter based on the {topic} {description} and {res}."
+        + " The content is better within 280 characters."
+        + " You may add hashtags like '#life'."
+    )
     return llm(prompt)
 
 
-def get_zhihu_response(wordcount, topic, description, res) -> str:
-    prompt = f"Please generate a {wordcount}-word paragraph of zhihu copy based on the {topic} {description} and {res}."
+def get_zhihu_response(wordcount, topic, description, res, style) -> str:
+    prompt = f"Please generate a {wordcount}-word {style} paragraph of zhihu copy based on the {topic} {description} and {res}."
     return llm(prompt)
 
 
-def get_weibo_response(wordcount, topic, description, res) -> str:
-    prompt = f"Please generate a {wordcount}-word paragraph of Weibo copy based on the {topic} {description} and {res}."\
+def get_weibo_response(wordcount, topic, description, res, style) -> str:
+    prompt = (
+        f"Please generate a {wordcount}-word {style} paragraph of Weibo copy based on the {topic} {description} and {res}."
         + " You may add hashtags like '#hashtag#'."
+    )
     return llm(prompt)
 
 
