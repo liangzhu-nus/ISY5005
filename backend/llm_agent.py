@@ -6,7 +6,8 @@ from langchain import SerpAPIWrapper
 from ImageCaption.predict import get_caption
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
+os.environ["OPENAI_API_KEY"] = "sk-ixQc7aP4xrC0UbYw227c6dFc5179494791B8676c53A47c7e"
+os.environ["OPENAI_BASE_URL"] = "https://aihubmix.com/v1"
 os.environ["SERPAPI_API_KEY"] = (
     # add your key
     "1e3c93e0753ac224098370cd71da86150c6609caba6b5aaa307e04b72a5006e1"

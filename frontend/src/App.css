@@ -36,3 +36,20 @@
     transform: rotate(360deg);
   }
 }
+
+
+.app-container {
+  padding: 20px;
+}
+
+.header-row {
+  margin-bottom: 20px;
+}
+
+.textarea-response {
+  height: 90%;
+}
+
+.publish-button {
+  margin-top: 10px;
+}
