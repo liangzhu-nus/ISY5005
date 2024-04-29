@@ -11,7 +11,7 @@ function App() {
   const [description, setDescription] = useState('');
   const [wordCount, setWordCount] = useState(200);
   const [isLiveSearchEnabled, setIsLiveSearchEnabled] = useState(false);
-  const [isGenPicEnabled, setIsGenPicEnabled] = useState(false);
+  const [isGenDescEnabled, setIsGenDescEnabled] = useState(true);
   const [responseText, setResponseText] = useState('');
   const [selectedPlatform, setSelectedPlatform] = useState('xiaohongshu');
   const [selectedStyle, setSelectedStyle] = useState('tech');
@@ -85,20 +85,27 @@ function App() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
+    const filename = fileList.length > 0 ? fileList[0].name : '';
+    console.log(filename);
     const formData = {
       topic,
       description,
       wordCount,
       isLiveSearchEnabled,
+      isGenDescEnabled,
       selectedStyle,
       selectedPlatform,
+      filename
     };
 
     setIsGenerating(true);
     try {
       const response = await axios.post('http://127.0.0.1:5000/generate-text', formData);
       setResponseText(response.data['result']);
+      if (isGenDescEnabled) {
+        setDescription(response.data['desc']);
+      }
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -130,7 +137,7 @@ function App() {
   };
 
   return (
-    <div className="App" style={{ padding: '30px 80px' }}>
+    <div className="App" style={{ padding: '30px 180px' }}>
       <Row justify="center" style={{ marginBottom: '20px' }}>
         <h1>Creator Automatic Assistant</h1>
       </Row>
@@ -145,7 +152,7 @@ function App() {
               <Input value={topic} onChange={(e) => setTopic(e.target.value)} />
             </Form.Item>
             <Form.Item label="Brief description">
-              <TextArea value={description} onChange={(e) => setDescription(e.target.value)} />
+              <TextArea value={description} onChange={(e) => setDescription(e.target.value)} readOnly={isGenDescEnabled} />
             </Form.Item>
             <Form.Item label="Article style">
               <Select value={selectedStyle} onChange={setSelectedStyle}>
@@ -167,10 +174,10 @@ function App() {
               <InputNumber min={30} max={1000} value={wordCount} onChange={setWordCount} />
             </Form.Item>
             <Form.Item label="Enable live searching" valuePropName="checked">
-              <Switch checked={isLiveSearchEnabled} onChange={setIsLiveSearchEnabled} checkedChildren="开启" unCheckedChildren="关闭" />
+              <Switch checked={isLiveSearchEnabled} onChange={setIsLiveSearchEnabled} checkedChildren="On" unCheckedChildren="Off" />
             </Form.Item>
-            <Form.Item label="Enable image generating" valuePropName="checked">
-              <Switch checked={isGenPicEnabled} onChange={setIsGenPicEnabled} checkedChildren="开启" unCheckedChildren="关闭" />
+            <Form.Item label="Enable auto-describe image" valuePropName="checked">
+              <Switch checked={isGenDescEnabled} onChange={setIsGenDescEnabled} checkedChildren="On" unCheckedChildren="Off" />
             </Form.Item>
             <Form.Item label="Upload image">
               <Upload
@@ -195,9 +202,9 @@ function App() {
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={isGenerating}>Generate article</Button>
             </Form.Item>
-            <Form.Item label="Feedback">
+            {/* <Form.Item label="Feedback">
               <Rate character={({ index }) => customIcons[index + 1]} />
-            </Form.Item>
+            </Form.Item> */}
           </Form>
         </Col>
         <Col span={12}>

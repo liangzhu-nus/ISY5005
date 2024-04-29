@@ -22,6 +22,7 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
 # Configure the folder to store uploads
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -71,8 +72,15 @@ def generate_text():
     description = data["description"]
     wordcount = data["wordCount"]
     isLiveSearchEnabled = data["isLiveSearchEnabled"]
+    isGenDescEnabled = data["isGenDescEnabled"]
     selectedPlatform = data["selectedPlatform"]
     selectedStyle = data["selectedStyle"]
+    
+    if isGenDescEnabled:
+        filename = data['filename'] # must be a file name in the uploads folder
+        description = get_original_description(filename).strip('\n')
+        # description = beautify_picture_description(description)
+    
     result = get_llm_response(
         topic,
         description,
@@ -81,8 +89,8 @@ def generate_text():
         selectedPlatform,
         selectedStyle,
     )
-    print(result)
-    return jsonify({"result": result})
+    result = result.strip('\n "')
+    return jsonify({"result": result, "desc":description})
 
 
 @app.route("/post-social", methods=["POST"])
@@ -95,10 +103,8 @@ def post_social():
     filename = data["filename"]
     if filename == "":  # 没有文件设为None
         img_dir = None
-    else:
-        img_dir = os.path.abspath(
-            os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        )  # 必须是本地的绝对路径
+    else:  # 必须是本地的绝对路径
+        img_dir = os.path.join(CURRENT_DIR, app.config["UPLOAD_FOLDER"], filename)
     # img_dir = os.path.abspath(os.path.join(app.config["UPLOAD_FOLDER"], "1.png"))
     try:
         if platform == 'xiaohongshu': #图片正文必需 可在前端验证
@@ -115,15 +121,13 @@ def post_social():
         return jsonify({"error": e}), 400
     return jsonify({"status": "success"})
 
-
-@app.route("/get_pic_description", methods=["POST"])
-def get_pic_description():
-    """img_url: must be a file name in the uploads folder"""
-    data = request.get_json()
-    img_url = data["img_url"]
-    # img_url = "1.png"
-    description = get_original_description(img_url)
-    return jsonify({"description": beautify_picture_description(description)})
+# def get_pic_description():
+#     """filename: must be a file name in the uploads folder"""
+#     data = request.get_json()
+#     filename = data["filename"]
+#     # img_url = "1.png"
+#     description = get_original_description(filename)
+#     return jsonify({"description": beautify_picture_description(description)})
 
 # Start the Flask application
 if __name__ == "__main__":

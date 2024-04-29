@@ -1,7 +1,7 @@
 """
 Pulishers using RPA
 """
-import platform
+import platform, unicodedata
 from functools import wraps
 import tagui as t
 
@@ -128,25 +128,6 @@ def pubZhihu(content, title):
     # t.close()
 
 
-def _processTwitterContent(b_content: bytearray):
-    '''处理过长的文本，但应尽量避免使用该函数'''
-    start = 0
-    messages = []
-    while start < len(b_content):
-        chunk = b_content[start : start + TWEET_LENGTH]
-        while True:
-            try:
-                msg = chunk.decode("GBK")
-            except UnicodeDecodeError:
-                chunk = chunk[:-1]
-            else:
-                break
-        messages.append(msg)
-        start += len(chunk)
-
-    return messages
-
-
 @forceClose
 def pubTwitter(content, img_dir = None):
     '''X发布
@@ -161,14 +142,15 @@ def pubTwitter(content, img_dir = None):
         # t.upload("//*[@data-testid='fileInput']",img_dir)
         t.click("//*[@data-testid='fileInput']")
         t.wait(0.5)
-        if CTRL == '[cmd]':
+        if system == "Darwin":
             t.keyboard(CTRL+"[shift]g")
         t.keyboard(img_dir + "[enter]")
         t.wait(0.5)
 
     # Text
-    if len(b_content:=content.encode("GBK")) > TWEET_LENGTH:
-        messages = _processTwitterContent(b_content)
+    if len(n_content := unicodedata.normalize("NFC", content)) > TWEET_LENGTH:
+        # messages = _processTwitterContent(n_content)
+        messages = [content[:TWEET_LENGTH]]
     else:
         messages = [content]
     t.click("//*[@data-testid='tweetTextarea_0']")
@@ -207,14 +189,3 @@ def pubWeibo(content, img_dir=None):
         t.wait(0.8)
 
     t.click("//a[@class='m-send-btn']")
-
-
-if __name__ == "__main__":
-    content = """这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段
-    测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本
-    这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本
-    这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本这是一段测试文本
-    """
-    content2 = "#标签一 #标签二 这是很短的一句话"
-    img = r"D:\Desktop\sample.png"
-    pubTwitter(content2)

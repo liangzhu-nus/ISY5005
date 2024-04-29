@@ -1,5 +1,4 @@
 import os
-import sys
 from langchain_community.llms import OpenAI
 from langchain.agents import initialize_agent, AgentType, Tool
 from langchain import SerpAPIWrapper
@@ -30,11 +29,11 @@ def get_llm_response(
     selectedStyle,
 ) -> str:
     res = ""
-    llm = OpenAI()
     if isLiveSearchEnabled:
-        res = search_google(topic)
+        res = "and " + search_google(topic)
     else:
-        res = llm(topic)
+        # res = llm(topic)
+        res = ""
 
     style_adj = STYLE_MAP[selectedStyle]
 
@@ -50,7 +49,7 @@ def get_llm_response(
 
 def get_xiaohongshu_response(wordcount, topic, description, res, style) -> str:
     prompt = (
-        f"Please generate a {wordcount}-word {style} paragraph of Little Red Book copy based on the {topic} {description} and {res},"
+        f"Please generate a {wordcount}-word {style} paragraph of Little Red Book copy based on the {topic}, {description} {res},"
         + " include emojis, and add a few hashtags at the end of the copy, something like: '#travel'."
     )
     return llm(prompt)
@@ -58,7 +57,7 @@ def get_xiaohongshu_response(wordcount, topic, description, res, style) -> str:
 
 def get_x_response(wordcount, topic, description, res, style) -> str:
     prompt = (
-        f"Please generate a {style} paragraph for Twitter based on the {topic} {description} and {res}."
+        f"Please generate a {wordcount}-word {style} paragraph for Twitter based on the {topic}, {description} {res}."
         + " The content is better within 280 characters."
         + " You may add hashtags like '#life'."
     )
@@ -66,14 +65,14 @@ def get_x_response(wordcount, topic, description, res, style) -> str:
 
 
 def get_zhihu_response(wordcount, topic, description, res, style) -> str:
-    prompt = f"Please generate a {wordcount}-word {style} paragraph of zhihu copy based on the {topic} {description} and {res}."
+    prompt = f"Please generate a {wordcount}-word {style} paragraph of zhihu copy based on the {topic}, {description} {res}."
     return llm(prompt)
 
 
 def get_weibo_response(wordcount, topic, description, res, style) -> str:
     prompt = (
-        f"Please generate a {wordcount}-word {style} paragraph of Weibo copy based on the {topic} {description} and {res}."
-        + " You may add hashtags like '#hashtag#'."
+        f"Please generate a {wordcount}-word {style} paragraph for Instagram based on the {topic}, {description} {res}."
+        + " Add a few hashtags like '#hashtag#' at the end."
     )
     return llm(prompt)
 
@@ -100,7 +99,7 @@ def search_google(topic: str) -> str:
     return self_ask_with_search(topic)
 
 
-def beautify_picture_description(description: str, word_count=100) -> str:
+def beautify_picture_description(description: str, word_count=20) -> str:
     """Polishing according to the image description"""
     prompt = f"Please polish {description} with a word count of {word_count}."
     return llm(prompt)
@@ -112,7 +111,6 @@ def get_original_description(pic):
 
 
 if __name__ == "__main__":
-    llm = OpenAI()
     # print(get_llm_response("openai sora", "llm", 100, False))
     # print(get_llm_response("openai sora", "llm", 100, True))
-    print(get_original_description("1.png"))
+    print(get_original_description("1.jpg"))
