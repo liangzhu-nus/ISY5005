@@ -47,5 +47,4 @@ start: cd backend -> run `pip install -r requirements.txt` -> run `python app.py
 ---
 ## SECTION 6 : PROJECT REPORT / PAPER
 
-(add link to report)
-
+[Report](./report/ISA-Project-Report.pdf)
