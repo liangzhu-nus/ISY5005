@@ -14,13 +14,13 @@ In the dynamic world of digital marketing, creating and publishing engaging cont
 
 ## SECTION 3 : CREDITS / PROJECT CONTRIBUTION
 
-| Official Full Name | Student ID | Work Items                                         | Email              |
-| :----------------- | :--------: | :------------------------------------------------- | :----------------- |
-| Tang Haoran        | A0285856J  | Leader, Frontend Development, Documentation, Video |                    |
-| Chen Haoquan       | A0286061E  | Model Development, Documentation, Video            |                    |
-| Liang Zhu          | A0285771R  | Backend Development, Documentation                 |                    |
-| Zhang Yusen        | A0285839H  | RPA Development, Video                             | e1221651@u.nus.edu |
-| Chen Zhiwei        | A0285952N  | RPA Development, Video                             |                    |
+| Official Full Name | Student ID | Work Items                                         |
+| :----------------- | :--------: | :------------------------------------------------- | 
+| Tang Haoran        | A0285856J  | Leader, Frontend Development, Documentation, Video | 
+| Chen Haoquan       | A0286061E  | Model Development, Documentation, Video            |
+| Liang Zhu          | A0285771R  | Backend Development, Documentation                 |
+| Zhang Yusen        | A0285839H  | RPA Development, Video                             |
+| Chen Zhiwei        | A0285952N  | RPA Development, Video                             | 
 
 
 
